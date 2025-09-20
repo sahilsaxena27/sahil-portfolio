@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahil Saxena | Portfolio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            cursor: none; /* Hide default cursor */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        .container {
+            max-width: 1280px;
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #58a6ff;
+        }
+        .card {
+            background-color: #161b22;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary {
+            background-color: #0ea5e9; /* Light blue */
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #38bdf8; /* Lighter blue on hover */
+        }
+        .btn-secondary {
+            border: 1px solid #30363d;
+            transition: background-color 0.3s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #30363d;
+        }
+        .form-input {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+        .scroll-to-top {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        /* Custom Cursor Styles */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #58a6ff;
+            opacity: 0.5;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.2s ease-out, width 0.2s ease-out, height 0.2s ease-out, opacity 0.2s ease-out;
+            z-index: 9999;
+        }
+        #custom-cursor.hover {
+            width: 40px;
+            height: 40px;
+            opacity: 0.8;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        .cursor-trail {
+            position: absolute;
+            background-color: #58a6ff;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+        }
+        /* Mobile Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            animation: ripple-animation 0.6s ease-out forwards;
+        }
+        @keyframes ripple-animation {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        /* Hero section background */
+        #hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="leading-relaxed">
+    <!-- Custom Cursor -->
+    <div id="custom-cursor"></div>
+
+    <!-- Header & Navigation -->
+    <header class="fixed w-full z-50 bg-opacity-90 backdrop-filter backdrop-blur-lg border-b border-gray-700">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="#hero" class="text-2xl font-bold text-gray-50 nav-link">Sahil Saxena</a>
+            <div class="hidden md:flex space-x-6 lg:space-x-8 text-gray-400 font-medium">
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden text-gray-400 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-gray-900 border-t border-gray-700">
+            <a href="#projects" class="block py-3 px-6 text-gray-400 hover:bg-gray-800">Projects</a>
+            <a href="#skills" class="block py-3 px-6 text-gray-400 hover:bg-gray-800">Skills</a>
+            <a href="#contact" class="block py-3 px-6 text-gray-400 hover:bg-gray-800">Contact</a>
+        </div>
+    </header>
+
+    <main class="pt-24">
+        <!-- Hero Section -->
+        <section id="hero" class="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-center min-h-screen relative overflow-hidden">
+            <canvas id="hero-bg"></canvas>
+            <div class="text-center md:text-left md:w-1/2 p-4 z-10">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 text-gray-50">
+                    Hi, I'm Sahil Saxena
+                </h1>
+                <p class="text-xl sm:text-2xl text-gray-400 mb-6">
+                    A passionate web developer building modern and responsive applications.
+                </p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#contact" class="btn-primary inline-block py-3 px-6 rounded-lg font-semibold text-white text-center">Get In Touch</a>
+                    <a href="#" class="btn-secondary inline-block py-3 px-6 rounded-lg font-semibold text-gray-400 text-center">View Resume</a>
+                </div>
+            </div>
+            <div class="mt-24 md:mt-0 md:w-1/2 flex justify-center z-10">
+                <!-- Updated image source to use a local file path -->
+                <img src="profile.png" alt="Sahil Saxena" class="rounded-full shadow-lg border-4 border-gray-700 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 object-cover">
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-50">My Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project Card 1: OLA Ride Cancellation Dashboard -->
+                <div class="card p-6 rounded-lg shadow-lg">
+                    <img src="https://placehold.co/600x400/30363d/c9d1d9?text=OLA+Dashboard" alt="OLA Ride Cancellation Dashboard" class="rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-gray-50 mb-2">OLA Ride Cancellation Dashboard</h3>
+                    <p class="text-gray-400 text-sm mb-4" id="project-desc-1">Cleaned and processed ride cancellation data, wrote SQL queries, and created Power BI dashboards to identify cancellation trends.</p>
+                    <div class="flex space-x-2 mt-4">
+                        <a href="#" class="btn-primary py-2 px-4 rounded-lg text-sm text-white">View Live</a>
+                        <a href="#" class="btn-secondary py-2 px-4 rounded-lg text-sm text-gray-400">GitHub</a>
+                        <button onclick="generateDescription('project-desc-1', 'OLA Ride Cancellation Dashboard')" class="bg-gray-700 text-gray-300 py-2 px-4 rounded-lg text-sm hover:bg-gray-600 transition-colors duration-300">✨ Generate Description</button>
+                    </div>
+                </div>
+                <!-- Project Card 2: Amazon Sales Dashboard -->
+                <div class="card p-6 rounded-lg shadow-lg">
+                    <img src="https://placehold.co/600x400/30363d/c9d1d9?text=Amazon+Dashboard" alt="Amazon Sales Dashboard" class="rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-gray-50 mb-2">Amazon Sales Dashboard</h3>
+                    <p class="text-gray-400 text-sm mb-4" id="project-desc-2">Designed and built an interactive dashboard visualizing sales, courier delays, and product performance across categories.</p>
+                    <div class="flex space-x-2 mt-4">
+                        <a href="#" class="btn-primary py-2 px-4 rounded-lg text-sm text-white">View Live</a>
+                        <a href="#" class="btn-secondary py-2 px-4 rounded-lg text-sm text-gray-400">GitHub</a>
+                        <button onclick="generateDescription('project-desc-2', 'Amazon Sales Dashboard')" class="bg-gray-700 text-gray-300 py-2 px-4 rounded-lg text-sm hover:bg-gray-600 transition-colors duration-300">✨ Generate Description</button>
+                    </div>
+                </div>
+                <!-- Project Card 3: College Management System -->
+                <div class="card p-6 rounded-lg shadow-lg">
+                    <img src="https://placehold.co/600x400/30363d/c9d1d9?text=College+System" alt="College Management System" class="rounded-lg mb-4">
+                    <h3 class="text-xl font-bold text-gray-50 mb-2">College Management System</h3>
+                    <p class="text-gray-400 text-sm mb-4" id="project-desc-3">Developed a web application for managing students, staff, attendance, and results with role-based access.</p>
+                    <div class="flex space-x-2 mt-4">
+                        <a href="#" class="btn-primary py-2 px-4 rounded-lg text-sm text-white">View Live</a>
+                        <a href="#" class="btn-secondary py-2 px-4 rounded-lg text-sm text-gray-400">GitHub</a>
+                        <button onclick="generateDescription('project-desc-3', 'College Management System')" class="bg-gray-700 text-gray-300 py-2 px-4 rounded-lg text-sm hover:bg-gray-600 transition-colors duration-300">✨ Generate Description</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-50">Skills & Technologies</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">HTML5</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">CSS3</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">JavaScript</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">React</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">Tailwind CSS</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">Node.js</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">Express.js</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">MongoDB</span>
+                <span class="bg-gray-800 text-gray-400 rounded-lg py-2 px-4 text-sm font-medium">Git & GitHub</span>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-50">Get In Touch</h2>
+            <div class="max-w-xl mx-auto p-8 rounded-lg card">
+                <p class="text-center text-gray-400 mb-6">Have a question or want to work together? Fill out the form below or find me on social media.</p>
+                <form action="https://formspree.io/f/mnnbekvl" method="post" class="space-y-4">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-400">Name</label>
+                        <input type="text" id="name" name="name" class="form-input mt-1 block w-full rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-400">Email</label>
+                        <input type="email" id="email" name="email" class="form-input mt-1 block w-full rounded-md shadow-sm p-2">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-400">Message</label>
+                        <textarea id="message" name="message" rows="4" class="form-input mt-1 block w-full rounded-md shadow-sm p-2"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn-primary py-3 px-6 rounded-lg font-semibold text-white">Send Message</button>
+                    </div>
+                </form>
+                <div class="mt-8 text-center text-gray-400">
+                    <p class="mb-2">Find me on:</p>
+                    <div class="flex justify-center space-x-4">
+                        <a href="#" target="_blank" class="hover:text-white">GitHub</a>
+                        <a href="https://www.linkedin.com/in/sahil-saxena-8752a4221/" target="_blank" class="hover:text-white">LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 border-t border-gray-700 text-gray-500 text-sm">
+        <p>&copy; 2024 Sahil Saxena. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-to-top" class="scroll-to-top bg-gray-800 text-white rounded-full p-3 shadow-lg hover:bg-gray-700 focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </button>
+
+    <script>
+        // Three.js Particle Animation
+        window.onload = function() {
+            const canvas = document.getElementById('hero-bg');
+            const heroSection = document.getElementById('hero');
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+
+            let particles;
+            let particleCount = 1500;
+            let positions = new Float32Array(particleCount * 3);
+            let colors = new Float32Array(particleCount * 3);
+
+            const color = new THREE.Color();
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 200;
+                positions[i + 1] = (Math.random() - 0.5) * 200;
+                positions[i + 2] = (Math.random() - 0.5) * 200;
+
+                color.setHSL(Math.random() * 0.1 + 0.55, 0.8, 0.6); // Blueish hues
+                colors[i] = color.r;
+                colors[i + 1] = color.g;
+                colors[i + 2] = color.b;
+            }
+
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 1.0,
+                vertexColors: true,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+
+            camera.position.z = 100;
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            window.addEventListener('resize', onWindowResize);
+
+            function animate() {
+                requestAnimationFrame(animate);
+
+                particles.rotation.x += 0.0005;
+                particles.rotation.y += 0.0005;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#') {
+                        e.preventDefault();
+                        return;
+                    }
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu after clicking a link
+                    if (!mobileMenu.classList.contains('hidden')) {
+                         mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Scroll to top button functionality
+            const scrollToTopBtn = document.getElementById('scroll-to-top');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollToTopBtn.style.display = 'block';
+                } else {
+                    scrollToTopBtn.style.display = 'none';
+                }
+            });
+
+            scrollToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Custom cursor functionality with trail effect for desktop
+        if (window.innerWidth > 768) { // Only enable on desktop screens
+            const customCursor = document.getElementById('custom-cursor');
+            const interactiveElements = 'a, button';
+            const trailContainer = document.body;
+
+            document.addEventListener('mousemove', e => {
+                // Update main cursor position
+                customCursor.style.left = `${e.clientX}px`;
+                customCursor.style.top = `${e.clientY}px`;
+
+                // Create and position a new trail element
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = `${e.clientX + window.scrollX}px`;
+                trail.style.top = `${e.clientY + window.scrollY}px`;
+                trail.style.width = '10px';
+                trail.style.height = '10px';
+                trailContainer.appendChild(trail);
+
+                // Animate the trail element to fade out and shrink
+                setTimeout(() => {
+                    trail.style.transform = 'scale(0)';
+                    trail.style.opacity = '0';
+                }, 100);
+
+                // Remove the trail element after it has faded out
+                setTimeout(() => {
+                    trail.remove();
+                }, 600);
+            });
+
+            document.addEventListener('mouseover', e => {
+                if (e.target.matches(interactiveElements)) {
+                    customCursor.classList.add('hover');
+                }
+            });
+
+            document.addEventListener('mouseout', e => {
+                if (e.target.matches(interactiveElements)) {
+                    customCursor.classList.remove('hover');
+                }
+            });
+        } else {
+            document.body.style.cursor = 'default';
+            const customCursor = document.getElementById('custom-cursor');
+            if (customCursor) {
+                customCursor.style.display = 'none';
+            }
+        }
+
+        // Ripple effect for mobile touch interactions
+        const interactiveElements = document.querySelectorAll('a, button');
+
+        interactiveElements.forEach(element => {
+            element.addEventListener('click', function(e) {
+                // Check if the device is a mobile device (touch-enabled)
+                const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                
+                if (isMobile) {
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height) * 1.5;
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple';
+                    ripple.style.width = ripple.style.height = `${size}px`;
+                    ripple.style.left = `${x - size / 2}px`;
+                    ripple.style.top = `${y - size / 2}px`;
+
+                    this.appendChild(ripple);
+
+                    // Remove ripple element after animation
+                    ripple.addEventListener('animationend', () => {
+                        ripple.remove();
+                    });
+                }
+            });
+        });
+        
+
+        async function generateDescription(elementId, projectName) {
+            const descElement = document.getElementById(elementId);
+            const originalText = descElement.textContent;
+            descElement.textContent = '...Generating';
+
+            try {
+                const prompt = `Act as a professional and creative copywriter for a web developer portfolio. Write a compelling and concise project description (around 30-40 words, maximum 2 sentences) for a web project titled "${projectName}". Focus on highlighting the project's purpose, key features, and overall value. The description should be engaging and professional.`;
+
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    systemInstruction: {
+                        parts: [{ text: "You are a helpful assistant that generates professional project descriptions." }]
+                    },
+                };
+
+                // Retry logic with exponential backoff
+                let retries = 0;
+                const maxRetries = 3;
+                let response;
+
+                while (retries < maxRetries) {
+                    try {
+                        response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (response.status === 429) {
+                            const delay = Math.pow(2, retries) * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            retries++;
+                            continue;
+                        }
+
+                        if (!response.ok) {
+                            throw new Error(`API call failed with status: ${response.status}`);
+                        }
+
+                        break; // Exit loop on success
+                    } catch (error) {
+                        if (retries === maxRetries - 1) {
+                            throw error; // Re-throw if max retries reached
+                        }
+                        retries++;
+                    }
+                    console.log('Error: API call failed. Retrying...');
+                }
+
+                const result = await response.json();
+                const generatedText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (generatedText) {
+                    descElement.textContent = generatedText.replace(/\n/g, ' ').trim();
+                } else {
+                    descElement.textContent = originalText;
+                    console.error('Failed to get generated text from API response.');
+                }
+            } catch (error) {
+                console.error('An error occurred:', error);
+                descElement.textContent = 'Failed to generate. Please try again.';
+            }
+        }
+    </script>
+</body>
+</html>
